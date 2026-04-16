@@ -4,6 +4,10 @@ import '../widgets/item_card.dart';
 import '../widgets/category_selector.dart';
 import 'item_detail_screen.dart';
 
+/// The main dashboard of the application.
+///
+/// This screen displays a list of available items and categories,
+/// allowing the user to filter items by category and browse the marketplace.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -11,9 +15,13 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+/// State class for [HomeScreen] that manages the category selection
+/// and holds the static list of all items.
 class _HomeScreenState extends State<HomeScreen> {
   final List<String> categories = ['All', 'Electronics', 'Books', 'Furniture', 'Clothing'];
   String selectedCategory = 'All';
+  bool _isSearching = false;
+  String _searchQuery = '';
 
   final List<Item> allItems = [
     Item(
@@ -58,22 +66,56 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  /// Builds the visual structure of the home screen, including
+  /// an app bar, a category selector, and a grid of items.
   @override
   Widget build(BuildContext context) {
-    final filteredItems = selectedCategory == 'All'
-        ? allItems
-        : allItems.where((item) => item.category == selectedCategory).toList();
+    final filteredItems = allItems.where((item) {
+      final matchesCategory = selectedCategory == 'All' || item.category == selectedCategory;
+      final matchesSearch = _searchQuery.isEmpty || 
+                            item.title.toLowerCase().contains(_searchQuery) ||
+                            item.description.toLowerCase().contains(_searchQuery);
+      return matchesCategory && matchesSearch;
+    }).toList();
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('Marketplace', style: TextStyle(fontWeight: FontWeight.bold)),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset('assets/images/epfl.png'),
+        ),
+        title: _isSearching
+            ? TextField(
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: 'Search items...',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.black54),
+                ),
+                style: const TextStyle(color: Colors.black87),
+                onChanged: (query) {
+                  setState(() {
+                    _searchQuery = query.toLowerCase();
+                  });
+                },
+              )
+            : const Text('MarketPlace', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: Colors.black87),
-            onPressed: () {},
+            icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.black87),
+            onPressed: () {
+              setState(() {
+                if (_isSearching) {
+                  _isSearching = false;
+                  _searchQuery = '';
+                } else {
+                  _isSearching = true;
+                }
+              });
+            },
           ),
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87),

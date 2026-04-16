@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import '../models/item.dart';
 
+/// A screen that displays detailed information about a specific [Item].
+///
+/// It shows the item's image, title, price, description, and
+/// provides a persistent bottom bar for interactions like making an offer.
 class ItemDetailScreen extends StatelessWidget {
   final Item item;
 
   const ItemDetailScreen({super.key, required this.item});
 
+  /// Builds the comprehensive view for an item with a collapsible top bar
+  /// showcasing the image, and a scrollable body containing the details.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
