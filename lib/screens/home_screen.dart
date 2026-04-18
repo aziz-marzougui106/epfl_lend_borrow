@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 /// State class for [HomeScreen] that manages the category selection
 /// and holds the static list of all items.
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<String> categories = ['All', 'Electronics', 'Books', 'Furniture', 'Clothing'];
   String selectedCategory = 'All';
   bool _isSearching = false;
@@ -80,10 +81,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
+      key:_scaffoldKey,
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset('assets/images/epfl.png'),
+        leadingWidth: 120,
+        toolbarHeight: 40.0,
+        leading: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+              
+
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset('assets/images/epfl.png',fit: BoxFit.contain,),
+            ),
+          ],
         ),
         title: _isSearching
             ? TextField(
@@ -100,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
               )
-            : const Text('MarketPlace', style: TextStyle(fontWeight: FontWeight.bold)),
+            : const Text('LendNBorrow', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -119,9 +133,25 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              //buying functionality
+            },
           ),
         ],
+      ),
+      drawer: Drawer(
+        
+        child: SafeArea(
+          child: Column(
+            children: [
+              DrawerHeader(child: Text('drawer'),),
+              Tab(text:'Preferences'),
+              Tab(text:'History'),
+              Tab(text:'Bookmarks'),
+              ListTile(title:Text('logout'),tileColor: const Color.fromARGB(255, 140, 241, 231),)
+            ],
+          ),
+        ),
       ),
       body: Stack(
         children: [
