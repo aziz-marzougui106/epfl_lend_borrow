@@ -1,3 +1,6 @@
+import 'package:epfl_lend_borrow/data/notifiers.dart';
+import 'package:epfl_lend_borrow/screens/widget_tree.dart';
+import 'package:epfl_lend_borrow/widgets/navbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
@@ -33,28 +36,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int currentIndex=0;
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        title: Text("HomePage"),
-        centerTitle: true,
-      ),
-      body: currentIndex==0? Center(child:Text('0')):Center(child:Text('1')),
-      bottomNavigationBar: NavigationBar(
-        destinations:[
-          NavigationDestination(icon: Icon(Icons.home), label: 'home'),
-          NavigationDestination(icon: Icon(Icons.settings), label: 'settings')
-        ],
-        onDestinationSelected: (int value) {
-          setState(() {
-            currentIndex=value;
-          });
-        },
-        selectedIndex: currentIndex,
-      ),
+    return ValueListenableBuilder(
+      valueListenable: isDarkMode, 
+      builder: (context,isDark,child){
+        return MaterialApp(
+          title:'Flutter',
+          debugShowCheckedModeBanner: false,
+          theme:ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.teal,
+              brightness: isDarkMode.value? Brightness.dark : Brightness.light
+            ),
+          ),
+          home:WidgetTree(),
+        );  
+      }
     );
   }
 }
