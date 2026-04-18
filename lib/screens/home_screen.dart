@@ -123,46 +123,80 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          const SizedBox(height: 16),
-          CategorySelector(
-            categories: categories,
-            onCategorySelected: (category) {
-              setState(() {
-                selectedCategory = category;
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.builder(
-                itemCount: filteredItems.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemBuilder: (context, index) {
-                  return ItemCard(
-                    item: filteredItems[index],
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ItemDetailScreen(item: filteredItems[index]),
-                        ),
-                      );
-                    },
-                  );
+          Column(
+            children: [
+              const SizedBox(height: 16),
+              CategorySelector(
+                categories: categories,
+                onCategorySelected: (category) {
+                  setState(() {
+                    selectedCategory = category;
+                  });
                 },
               ),
-            ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: GridView.builder(
+                    itemCount: filteredItems.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.75,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemBuilder: (context, index) {
+                      return ItemCard(
+                        item: filteredItems[index],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ItemDetailScreen(item: filteredItems[index]),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+              
+            ],
           ),
         ],
+      ),
+      floatingActionButton: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FloatingActionButton(
+                child: Icon(Icons.add),
+                onPressed: (){
+                  print("hello");
+                }
+              ),
+              SizedBox( height: 10.0,),
+              FloatingActionButton(
+                child: Icon(Icons.person),
+                onPressed: (){
+                  print("profile");
+                }
+              )
+            ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        destinations:[
+          NavigationDestination(icon: Icon(Icons.home), label: 'home'),
+          NavigationDestination(icon: Icon(Icons.settings), label: 'settings')
+        ],
+        onDestinationSelected: (value) {
+          print(value==0?'asba':'settings');
+        },
+        selectedIndex: 1,
       ),
     );
   }
