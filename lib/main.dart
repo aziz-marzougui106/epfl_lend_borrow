@@ -1,4 +1,5 @@
 import 'package:epfl_lend_borrow/data/notifiers.dart';
+import 'package:epfl_lend_borrow/screens/pages/welcome_page.dart';
 import 'package:epfl_lend_borrow/screens/widget_tree.dart';
 import 'package:epfl_lend_borrow/widgets/navbar_widget.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
               brightness: isDarkMode.value? Brightness.dark : Brightness.light
             ),
           ),
-          home:WidgetTree(),
+          home:WelcomePage(),
         );  
       }
     );
