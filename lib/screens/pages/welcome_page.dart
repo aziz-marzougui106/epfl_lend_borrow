@@ -23,7 +23,7 @@ class WelcomePage extends StatelessWidget{
               FilledButton(
                 style:FilledButton.styleFrom(minimumSize: Size(double.infinity,40.0)),
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){return LoginPage();}));
+                  Navigator.push(context, MaterialPageRoute(builder: (context){return LoginPage();}));
                 },
                 child: Text("login")
                 
@@ -35,7 +35,7 @@ class WelcomePage extends StatelessWidget{
                 },
                 child: Text("getStarted")
                 
-                )
+              )
             ],
           ),
         ),
