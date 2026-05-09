@@ -1,4 +1,5 @@
 import 'package:epfl_lend_borrow/data/constants.dart';
+import 'package:epfl_lend_borrow/screens/pages/course_page.dart';
 import 'package:epfl_lend_borrow/widgets/hero_widget.dart';
 import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
@@ -10,7 +11,7 @@ class HomePage extends StatelessWidget {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(20.0),
-        child:Card(child: Container(width:double.infinity,padding: EdgeInsetsGeometry.symmetric(vertical:20.0),child: Column(children: [HeroWidget(title: 'i will ask her name'),...List.generate(4,(index){return Column(children:[Text(list.elementAt(index),style:KTextStyle.titleTelaText),Text('description of this',style: KTextStyle.descriptionText)]);}) ],),),),
+        child:Card(child: Container(width:double.infinity,padding: EdgeInsetsGeometry.symmetric(vertical:20.0),child: Column(children: [HeroWidget(nextPage: CoursePage(),title: 'i will ask her name'),...List.generate(4,(index){return Column(children:[Text(list.elementAt(index),style:KTextStyle.titleTelaText),Text('description of this',style: KTextStyle.descriptionText)]);}) ],),),),
       ),
     );
   }

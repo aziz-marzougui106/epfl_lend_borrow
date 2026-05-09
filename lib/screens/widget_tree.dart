@@ -1,7 +1,7 @@
 import 'package:epfl_lend_borrow/data/constants.dart';
 import 'package:epfl_lend_borrow/screens/pages/home_page.dart';
 import 'package:epfl_lend_borrow/screens/pages/profile_page.dart';
-import 'package:epfl_lend_borrow/screens/pages/settings_pages.dart';
+import 'package:epfl_lend_borrow/screens/pages/settings_page.dart';
 import 'package:epfl_lend_borrow/widgets/navbar_widget.dart';
 import 'package:epfl_lend_borrow/data/notifiers.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +34,7 @@ class WidgetTree extends StatelessWidget {
             onPressed: (){
               Navigator.push(//you can use pushReplacement but we can access nomore this page.use cases:login page
                 context, 
-                MaterialPageRoute(builder: (context){return SettingsPage(title: "Hello");})
+                MaterialPageRoute(builder: (context){return SettingsPage();})
               );
             }, 
             icon: Icon(Icons.settings))

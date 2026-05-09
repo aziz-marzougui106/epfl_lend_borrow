@@ -1,5 +1,6 @@
 import 'package:epfl_lend_borrow/data/constants.dart';
 import 'package:epfl_lend_borrow/data/notifiers.dart';
+import 'package:epfl_lend_borrow/screens/pages/login_page.dart';
 import 'package:epfl_lend_borrow/screens/pages/welcome_page.dart';
 import 'package:epfl_lend_borrow/screens/widget_tree.dart';
 import 'package:epfl_lend_borrow/widgets/navbar_widget.dart';
@@ -10,7 +11,7 @@ import 'screens/home_screen.dart';
 void main() {
   runApp(const MyApp());
 }
-String? title='EPFL Lend&&Borrow'; //telling this variable can be null
+String? title='LendNBorrow'; //telling this variable can be null
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -39,14 +40,15 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFFE50914), // EPFL red-ish seed color
-              primary: const Color(0xFFDA291C),
+              seedColor: const Color(0xFFE2001A), // EPFL red as the seed
+              primary: const Color(0xFFE2001A),
               brightness: isDarkMode.value? Brightness.dark:Brightness.light,
 
             ),
+            fontFamily: 'SF Pro Display',
             useMaterial3: true,
           ),
-          home: const MyHomePage()//HomeScreen(),
+          home: const LoginPage()//HomeScreen(),
         );
       }
     );
@@ -76,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
               brightness: isDarkMode.value? Brightness.dark : Brightness.light
             ),
           ),
-          home:WelcomePage(),
+          home:const LoginPage(),
         );  
       }
     );

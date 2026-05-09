@@ -1,12 +1,8 @@
-import 'package:epfl_lend_borrow/screens/widget_tree.dart';
-import 'package:epfl_lend_borrow/widgets/hero_widget.dart';
+import 'package:epfl_lend_borrow/screens/pages/main_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'main_page.dart';
 
-late TextEditingController emailController ;
-late TextEditingController pwdController ;
-
-class LoginPage extends StatefulWidget{
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
@@ -14,62 +10,267 @@ class LoginPage extends StatefulWidget{
 }
 
 class _LoginPageState extends State<LoginPage> {
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  bool _obscurePassword = true;
+  bool _isLoading = false;
+
   @override
-  void initState(){//called only the first time then just the build method called if state changes
-    print('init state');
+  void initState() {
     super.initState();
-    emailController =TextEditingController();
-    pwdController =TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
   }
+
   @override
-  void dispose(){
-    emailController.dispose();
-    pwdController.dispose();
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
-  @override
-  Widget build(BuildContext context) {
-    double widthScreen= MediaQuery.of(context).size.width;//can be use instead of LayoutBuilder 
-    return Scaffold(
-      appBar: AppBar(),
-      body:Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: LayoutBuilder(builder: (context,BoxConstraints constraints){
-              return FractionallySizedBox(
-                widthFactor: constraints.maxWidth >500? 0.5: 1.0,
-                child: Column(
-                  children: [
-                    HeroWidget(title:'need to know her name'),
-                    SizedBox(height: 10.0,),
-                    TextField(controller: emailController,decoration: InputDecoration(hintText: 'username/email',hintStyle: TextStyle(color:Colors.black12),border:OutlineInputBorder()),onEditingComplete: ()=> setState(() {}),),
-                    SizedBox(height: 10.0,),
-                    TextField(controller: pwdController,decoration: InputDecoration(hintText: 'password',hintStyle: TextStyle(color:Colors.black12),border:OutlineInputBorder()),onEditingComplete: ()=> setState(() {}),),
-                    TextButton(
-                        style:FilledButton.styleFrom(minimumSize: Size(double.infinity,40.0)),
-                        onPressed: (){
-                          onLoginPressed();
-                        },
-                        child: Text("getStarted")
-                        
-                    )
-                  ],
-                ),
-              );
-            })
-          ),
-        ),
-      )
+
+  void _onLoginPressed() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) return;
+
+    setState(() => _isLoading = true);
+
+    // Simulate API call — replace with real auth later
+    await Future.delayed(const Duration(seconds: 1));
+
+    setState(() => _isLoading = false);
+
+    // TODO: replace with real navigation after auth
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainScaffold()),
     );
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 48),
 
-  void onLoginPressed(){
-    if(emailController.text=='mohamed.marzougui@epfl.ch'&& pwdController.text=='hello'){
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context){return WidgetTree();}),(route)=>false);
+              // ── Header ──────────────────────────────────────
+              Center(
+                child: Column(
+                  children: [
+                    // EPFL logo
+                    Image.asset(
+                      'assets/images/epfl.png',
+                      height: 48,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 16),
+                    // App name
+                    const Text(
+                      'LendNBorrow',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFE2001A), // EPFL red
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'The EPFL student marketplace',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black45,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-    }
+              const SizedBox(height: 52),
 
+              // ── Form ─────────────────────────────────────────
+              const Text(
+                'Sign in',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Use your EPFL email to continue',
+                style: TextStyle(fontSize: 13, color: Colors.black45),
+              ),
+              const SizedBox(height: 28),
+
+              // Email field
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: 'firstname.lastname@epfl.ch',
+                  hintStyle: const TextStyle(color: Colors.black26, fontSize: 14),
+                  prefixIcon: const Icon(Icons.mail_outline, color: Colors.black38, size: 20),
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFFE2001A), width: 1.5),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Password field
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  hintStyle: const TextStyle(color: Colors.black26, fontSize: 14),
+                  prefixIcon: const Icon(Icons.lock_outline, color: Colors.black38, size: 20),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      color: Colors.black38,
+                      size: 20,
+                    ),
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFFE2001A), width: 1.5),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Forgot password
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFFE2001A),
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text('Forgot password?', style: TextStyle(fontSize: 13),),
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              // Login button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _emailController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty &&
+                          !_isLoading
+                      ? _onLoginPressed
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE2001A),
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey.shade200,
+                    disabledForegroundColor: Colors.grey.shade400,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Sign in',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Divider
+              Row(
+                children: [
+                  Expanded(child: Divider(color: Colors.grey.shade200)),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('New here?', style: TextStyle(color: Colors.black38, fontSize: 12)),
+                  ),
+                  Expanded(child: Divider(color: Colors.grey.shade200)),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // Register button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: OutlinedButton(
+                  onPressed: () {
+                    // TODO: navigate to register page
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFE2001A),
+                    side: const BorderSide(color: Color(0xFFE2001A)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Create an account',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

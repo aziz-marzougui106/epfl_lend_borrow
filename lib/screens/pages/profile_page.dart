@@ -18,6 +18,6 @@ class _ProfilePageState extends State<ProfilePage> {
   String? menu='e1';
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.all(20.0),child: Column(children: [CircleAvatar(radius: 50.0,backgroundImage: AssetImage('assets/imgages/epfl.png'),),ListTile(title:Text('logout'),onTap: (){selectedPageNotifier.value=0;Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){return WelcomePage();}));},)],),);//assetimage almost only with circle avatar
+    return Padding(padding: EdgeInsets.all(20.0),child: Column(children: [CircleAvatar(radius: 50.0,backgroundImage: AssetImage('assets/images/epfl.png'),),ListTile(title:Text('logout'),onTap: (){selectedPageNotifier.value=0;Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){return WelcomePage();}));},)],),);//assetimage almost only with circle avatar
   }
 }
