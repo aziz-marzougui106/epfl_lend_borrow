@@ -4,11 +4,11 @@ from database import get_db
 from models.user import User
 from schemas.user import UserCreate, UserResponse, UserLogin, Token
 from utils.auth import hash_password, verify_password, create_access_token
-
+from dependencies import db_dependency
 router = APIRouter()
 
 @router.post("/register", response_model=UserResponse, status_code=201)
-def register(user: UserCreate, db: Session = Depends(get_db)):
+def register(user: UserCreate, db: db_dependency):
     # Check if email already exists
     existing = db.query(User).filter(User.email == user.email).first()
     if existing:
@@ -29,7 +29,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 @router.post("/login", response_model=Token)
-def login(user: UserLogin, db: Session = Depends(get_db)):
+def login(user: UserLogin, db: db_dependency):
     # Find user by email
     db_user = db.query(User).filter(User.email == user.email).first()
 

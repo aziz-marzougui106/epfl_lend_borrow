@@ -23,7 +23,7 @@ class ItemDetailScreen extends StatelessWidget {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               background: Image.network(
-                item.imageUrl,
+                item.imageUrl.toString(),
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
                   color: Colors.grey.shade200,

@@ -1,6 +1,8 @@
 import 'package:epfl_lend_borrow/screens/pages/main_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'main_page.dart';
+import '../../services/api_service.dart';
+import '../../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,6 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   late TextEditingController _passwordController;
   bool _obscurePassword = true;
   bool _isLoading = false;
+  String? _errorMessage; // shown below the button on failure
 
   @override
   void initState() {
@@ -32,18 +35,35 @@ class _LoginPageState extends State<LoginPage> {
   void _onLoginPressed() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) return;
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null; // clear any previous error
+    });
 
-    // Simulate API call — replace with real auth later
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      // 1. Call FastAPI — get the JWT token back
+      final token = await ApiService.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
 
-    setState(() => _isLoading = false);
+      // 2. Save the token in SharedPreferences
+      await AuthService.saveToken(token);
 
-    // TODO: replace with real navigation after auth
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const MainScaffold()),
-    );
+      // 3. Navigate to the main app
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainScaffold()),
+      );
+    } catch (e) {
+      // Show the error message under the button
+      setState(() {
+        _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -62,30 +82,25 @@ class _LoginPageState extends State<LoginPage> {
               Center(
                 child: Column(
                   children: [
-                    // EPFL logo
                     Image.asset(
                       'assets/images/epfl.png',
                       height: 48,
                       fit: BoxFit.contain,
                     ),
                     const SizedBox(height: 16),
-                    // App name
                     const Text(
                       'LendNBorrow',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFE2001A), // EPFL red
+                        color: Color(0xFFE2001A),
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 6),
                     const Text(
                       'The EPFL student marketplace',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black45,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.black45),
                     ),
                   ],
                 ),
@@ -149,7 +164,9 @@ class _LoginPageState extends State<LoginPage> {
                   prefixIcon: const Icon(Icons.lock_outline, color: Colors.black38, size: 20),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      _obscurePassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
                       color: Colors.black38,
                       size: 20,
                     ),
@@ -186,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: const Text('Forgot password?', style: TextStyle(fontSize: 13),),
+                  child: const Text('Forgot password?', style: TextStyle(fontSize: 13)),
                 ),
               ),
 
@@ -228,6 +245,26 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
+              // ── Error message ─────────────────────────────────
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Icon(Icons.error_outline, color: Color(0xFFE2001A), size: 16),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(
+                          color: Color(0xFFE2001A),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
               const SizedBox(height: 32),
 
               // Divider
@@ -236,7 +273,8 @@ class _LoginPageState extends State<LoginPage> {
                   Expanded(child: Divider(color: Colors.grey.shade200)),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('New here?', style: TextStyle(color: Colors.black38, fontSize: 12)),
+                    child: Text('New here?',
+                        style: TextStyle(color: Colors.black38, fontSize: 12)),
                   ),
                   Expanded(child: Divider(color: Colors.grey.shade200)),
                 ],

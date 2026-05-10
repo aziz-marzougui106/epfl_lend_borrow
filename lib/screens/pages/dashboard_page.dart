@@ -1,113 +1,22 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
+import '../../models/item.dart';
 
-// ── Item model ─────────────────────────────────────────────────
-class Item {
-  final String id;
-  final String title;
-  final String description;
-  final double price;
-  final String category;
-  final ItemType type;
-  final String? imageUrl;
-  final String ownerName;
-  final DateTime postedAt;
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
 
-  const Item({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.price,
-    required this.category,
-    required this.type,
-    this.imageUrl,
-    required this.ownerName,
-    required this.postedAt,
-  });
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-enum ItemType { sell, lend }
+class _DashboardPageState extends State<DashboardPage> {
+  late Future<List<Item>> _itemsFuture;
 
-// ── Mock data ──────────────────────────────────────────────────
-final List<Item> mockItems = [
-  Item(
-    id: '1',
-    title: 'MacBook Pro 16"',
-    description:
-        'Barely used MacBook Pro 16-inch. M1 Max, 32GB RAM, 1TB SSD. Perfect for coding and design projects. Comes with original charger and box.',
-    price: 1899.00,
-    category: 'Electronics',
-    type: ItemType.sell,
-    imageUrl:
-        'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
-    ownerName: 'Ahmed K.',
-    postedAt: DateTime.now().subtract(const Duration(hours: 2)),
-  ),
-  Item(
-    id: '2',
-    title: 'Calculus Early Transcendentals',
-    description:
-        'Textbook for MATH-101. Some highlighting in chapters 3-5 but overall great condition. Edition 8. Very useful for the exam.',
-    price: 45.00,
-    category: 'Books',
-    type: ItemType.sell,
-    ownerName: 'Sara M.',
-    postedAt: DateTime.now().subtract(const Duration(hours: 5)),
-  ),
-  Item(
-    id: '3',
-    title: 'Ergonomic Desk Chair',
-    description:
-        'Herman Miller Aeron chair, size B. Excellent for long study sessions. Adjustable lumbar support. Available for lending by the semester.',
-    price: 30.00,
-    category: 'Furniture',
-    type: ItemType.lend,
-    imageUrl:
-        'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&q=80&w=800',
-    ownerName: 'Lucas B.',
-    postedAt: DateTime.now().subtract(const Duration(days: 1)),
-  ),
-  Item(
-    id: '4',
-    title: 'Sony WH-1000XM4',
-    description:
-        'Noise cancelling headphones in perfect condition. Great for studying in the library or on the metro. Box and all accessories included.',
-    price: 15.00,
-    category: 'Electronics',
-    type: ItemType.lend,
-    imageUrl:
-        'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&q=80&w=800',
-    ownerName: 'Julie P.',
-    postedAt: DateTime.now().subtract(const Duration(days: 2)),
-  ),
-  Item(
-    id: '5',
-    title: 'EPFL Hoodie',
-    description:
-        'Size M. Official EPFL merchandise. Very warm and comfortable. Worn only a few times. Perfect condition, no stains or damage.',
-    price: 30.00,
-    category: 'Clothing',
-    type: ItemType.sell,
-    imageUrl:
-        'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=800',
-    ownerName: 'Marc D.',
-    postedAt: DateTime.now().subtract(const Duration(days: 3)),
-  ),
-  Item(
-    id: '6',
-    title: 'Scientific Calculator TI-84',
-    description:
-        'Texas Instruments TI-84 Plus. Required for several EPFL courses. Works perfectly, battery recently replaced. Available to lend for the semester.',
-    price: 5.00,
-    category: 'Electronics',
-    type: ItemType.lend,
-    ownerName: 'Yuki T.',
-    postedAt: DateTime.now().subtract(const Duration(days: 4)),
-  ),
-];
-
-// ── Dashboard page ─────────────────────────────────────────────
-class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  @override
+  void initState() {
+    super.initState();
+    _itemsFuture = ApiService.getItems(); // kick off the API call immediately
+  }
 
   String _timeAgo(DateTime date) {
     final diff = DateTime.now().difference(date);
@@ -118,13 +27,74 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      itemCount: mockItems.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 0),
-      itemBuilder: (context, index) {
-        final item = mockItems[index];
-        return _ItemCard(item: item, timeAgo: _timeAgo(item.postedAt));
+    return FutureBuilder<List<Item>>(
+      future: _itemsFuture,
+      builder: (context, snapshot) {
+
+        // ── Loading ──────────────────────────────────────────
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFE2001A)),
+          );
+        }
+
+        // ── Error ────────────────────────────────────────────
+        if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.wifi_off_rounded, size: 48, color: Colors.black26),
+                const SizedBox(height: 12),
+                Text(
+                  snapshot.error.toString().replaceFirst('Exception: ', ''),
+                  style: const TextStyle(color: Colors.black45, fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => setState(() {
+                    _itemsFuture = ApiService.getItems(); // retry
+                  }),
+                  child: const Text(
+                    'Retry',
+                    style: TextStyle(color: Color(0xFFE2001A)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // ── Empty ────────────────────────────────────────────
+        final items = snapshot.data!;
+        if (items.isEmpty) {
+          return const Center(
+            child: Text(
+              'No items yet. Be the first to post!',
+              style: TextStyle(color: Colors.black45),
+            ),
+          );
+        }
+
+        // ── List ─────────────────────────────────────────────
+        return RefreshIndicator(
+          color: const Color(0xFFE2001A),
+          onRefresh: () async {
+            setState(() {
+              _itemsFuture = ApiService.getItems(); // pull-to-refresh
+            });
+          },
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            itemCount: items.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 0),
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return _ItemCard(item: item);
+            },
+          ),
+        );
       },
     );
   }
@@ -133,9 +103,8 @@ class DashboardPage extends StatelessWidget {
 // ── Item card ──────────────────────────────────────────────────
 class _ItemCard extends StatelessWidget {
   final Item item;
-  final String timeAgo;
 
-  const _ItemCard({required this.item, required this.timeAgo});
+  const _ItemCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -151,9 +120,7 @@ class _ItemCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.grey.withValues(alpha: 0.12),
-          ),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.12)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,9 +128,7 @@ class _ItemCard extends StatelessWidget {
             // ── Optional image ───────────────────────────
             if (item.imageUrl != null)
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.network(
                   item.imageUrl!,
                   height: 160,
@@ -205,13 +170,8 @@ class _ItemCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-
-                      // Sell / Lend badge
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: isLend
                               ? Colors.blue.withValues(alpha: 0.1)
@@ -239,10 +199,7 @@ class _ItemCard extends StatelessWidget {
 
                   // ── Category chip ──────────────────────
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE2001A).withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(6),
@@ -273,10 +230,9 @@ class _ItemCard extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // ── Bottom row: price + owner + time ───
+                  // ── Bottom row: price + owner ──────────
                   Row(
                     children: [
-                      // Price
                       Text(
                         isLend
                             ? 'CHF ${item.price.toStringAsFixed(2)}/day'
@@ -287,14 +243,10 @@ class _ItemCard extends StatelessWidget {
                           color: Color(0xFFE2001A),
                         ),
                       ),
-
                       const Spacer(),
-
-                      // Owner avatar
                       CircleAvatar(
                         radius: 10,
-                        backgroundColor:
-                            const Color(0xFFE2001A).withValues(alpha: 0.15),
+                        backgroundColor: const Color(0xFFE2001A).withValues(alpha: 0.15),
                         child: Text(
                           item.ownerName[0],
                           style: const TextStyle(
@@ -305,24 +257,9 @@ class _ItemCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 5),
-
-                      // Owner name
                       Text(
                         item.ownerName,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-
-                      // Time ago
-                      Text(
-                        timeAgo,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey.shade400,
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                       ),
                     ],
                   ),
