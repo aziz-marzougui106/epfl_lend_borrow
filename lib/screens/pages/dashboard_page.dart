@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import '../../models/item.dart';
 import 'filters/price_filter.dart';
+import 'filters/category_filter.dart';
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -11,6 +12,9 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   late Future<List<Item>> _itemsFuture;
+  late Map<ItemCategory,bool> _selectedCategories={};
+  late Map<ItemCategory,bool> _selectedBrands={};
+  late Map<ItemCategory,bool> _selectedTypes={};
 
   @override
   void initState() {
@@ -87,7 +91,12 @@ class _DashboardPageState extends State<DashboardPage> {
           },
           child: Column(
             children: [
-              Row(children: [],),
+              Row(children: [
+                ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,builder: (context) => CategoryPage(chosenCat: _selectedCategories),);if (result != null) {setState(() {_selectedCategories = result;});}},child: Text('category')),
+                ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,builder: (context) => CategoryPage(chosenCat: _selectedBrands),);if (result != null) {setState(() {_selectedBrands = result;});}},child: Text('brand')),
+                ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,builder: (context) => CategoryPage(chosenCat: _selectedTypes),);if (result != null) {setState(() {_selectedTypes = result;});}},child: Text('type')),
+                ElevatedButton(onPressed: ()async{setState((){_itemsFuture = ApiService.getItemsAlongFilter(_selectedCategories,Map<ItemType, dynamic>.from(_selectedTypes),Map<ItemBrand, dynamic>.from(_selectedBrands));});}, child: Text('apply filter(s)')),//needs to be fixed
+              ],),
               ListView.separated(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 itemCount: items.length,

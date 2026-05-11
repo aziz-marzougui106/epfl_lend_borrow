@@ -46,11 +46,15 @@ class ApiService {
   // ── Items ──────────────────────────────────────────────────────
 
   /// GET /filter/ -fetch all items (public, no auth needed) according to a specific filter
-  static Future<List<Item>> getItemsAlongFilter(Map<String,dynamic> filters) async{
-    Map<String, String> argFilters = {};
-    for(var filter in filters.entries){if (filter.value!=null){argFilters.putIfAbsent(filter.key, ()=>filter.value.toString());}}
+  static Future<List<Item>> getItemsAlongFilter(Map<ItemCategory,dynamic> catFilter,Map<ItemType,dynamic> typeFilter,Map<ItemBrand,dynamic> brandFilter,) async{
+    Map<ItemCategory, String> catFilters = {};
+    for(var filter in catFilter.entries){if (filter.value!=null){catFilters.putIfAbsent(filter.key, ()=>filter.value.toString());}}
+    Map<ItemType, String> typeFilters = {};
+    for(var filter in typeFilter.entries){if (filter.value!=null){typeFilters.putIfAbsent(filter.key, ()=>filter.value.toString());}}
+    Map<ItemBrand, String> brandFilters = {};
+    for(var filter in brandFilter.entries){if (filter.value!=null){brandFilters.putIfAbsent(filter.key, ()=>filter.value.toString());}}
     final response= await http.get(
-      Uri.http(_baseUrl,'/items/filter',argFilters),
+      Uri.http(_baseUrl,'/items/filter',Map<String, dynamic>.from(catFilters)),//TOCHANGE
       headers: await _headers()
     );
 

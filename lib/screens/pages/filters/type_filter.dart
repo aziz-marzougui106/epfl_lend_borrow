@@ -13,19 +13,19 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: (){
-        showModalBottomSheet<Widget>(
-          context: context, 
-          builder: (context)=>Container(
-            child: ListView.builder(
-              itemCount: ItemType.values.length,
-              itemBuilder: (context, index) => CheckboxListTile.adaptive(value:false, title:Text(ItemType.values.elementAt(index).toString()), onChanged: (value)=> setState(() {widget.chosenType[ItemType.values.elementAt(index)]=value!;}))
-            ),
-          )
-        ); 
-      }, 
-      child: Text('type')
+    return Column(
+      children: [
+        ListView.builder(
+          itemCount: ItemType.values.length,
+          itemBuilder: (context, index) => CheckboxListTile.adaptive(value:false, title:Text(ItemType.values.elementAt(index).toString()), onChanged: (value)=> setState(() {widget.chosenType[ItemType.values.elementAt(index)]=value!;}))
+        ),
+        ElevatedButton(
+          onPressed: (){
+            Navigator.pop(context,widget.chosenType);
+          }, 
+          child: Text('done')
+        ),
+      ],
     );
   }
 }
