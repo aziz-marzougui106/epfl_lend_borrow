@@ -45,6 +45,26 @@ class ApiService {
 
   // ── Items ──────────────────────────────────────────────────────
 
+  /// GET /filter/ -fetch all items (public, no auth needed) according to a specific filter
+  static Future<List<Item>> getItemsAlongFilter(Map<String,dynamic> filters) async{
+    Map<String, String> argFilters = {};
+    for(var filter in filters.entries){if (filter.value!=null){argFilters.putIfAbsent(filter.key, ()=>filter.value.toString());}}
+    final response= await http.get(
+      Uri.http(_baseUrl,'/items/filter',argFilters),
+      headers: await _headers()
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Item.fromJson(json)).toList();
+    }else if (response.statusCode == 404) {
+      throw Exception('No items found');
+    }else if (response.statusCode == 500) {
+      throw Exception('Server error, try again later');
+    }else {
+      throw Exception('Failed to load items');
+    }
+  }
   /// GET /items/ — fetch all items (public, no auth needed)
   static Future<List<Item>> getItems() async {
     final response = await http.get(
