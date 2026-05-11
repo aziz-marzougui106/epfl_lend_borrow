@@ -15,6 +15,7 @@ class Item(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String, nullable=False)
+    brand= Column(String,nullable=False)
     description = Column(String, nullable=False)
     price = Column(Float, nullable=False)
     category = Column(String, nullable=False)

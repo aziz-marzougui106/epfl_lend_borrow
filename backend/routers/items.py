@@ -1,20 +1,22 @@
 from fastapi import APIRouter, HTTPException, status
-from typing import List
+from typing import List,Optional
 from uuid import UUID
 
 from database import db_dependency
 from dependencies import user_dependency
 from models.item import Item
-from backend.schemas.items import ItemCreate, ItemUpdate, ItemResponse
+from backend.schemas.items import ItemCreate, ItemUpdate, ItemResponse,ItemType
 
 router = APIRouter(prefix="/items", tags=["items"])
 
+PRICE_INTERVAL=10
 
 def _to_response(item: Item) -> ItemResponse:
     """Convert an Item ORM object to ItemResponse using the owner relationship."""
     return ItemResponse(
         id=item.id,
         title=item.title,
+        brand=item.brand,
         description=item.description,
         price=item.price,
         category=item.category,
@@ -39,6 +41,26 @@ def get_my_items(db: db_dependency, current_user: user_dependency):
     items = db.query(Item).filter(Item.owner_id == current_user.id).all()
     return [_to_response(item) for item in items]
 
+@router.get("/filter",response_model=List[ItemResponse])
+def filter(db:db_dependency,
+           category:Optional[str]=None,
+           title:Optional[str]=None,
+           brand:Optional[str]=None,
+           price:Optional[float]=None,
+           type:Optional[ItemType]=None
+):
+    query = db.query(Item)
+    if category:
+        query= query.filter(Item.category==category)
+    if title:
+        query= query.filter(Item.title==title)
+    if brand:
+        query= query.filter(Item.brand==brand)
+    if price:
+        query= query.filter(abs(Item.price-price)<PRICE_INTERVAL)
+    if type:
+        query= query.filter(Item.type==type)
+    return [_to_response(item) for item in query]
 
 @router.get("/{item_id}", response_model=ItemResponse)
 def get_item(item_id: UUID, db: db_dependency):
@@ -49,11 +71,14 @@ def get_item(item_id: UUID, db: db_dependency):
     return _to_response(item)
 
 
+
+
 @router.post("/", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)
 def create_item(item_data: ItemCreate, db: db_dependency, current_user: user_dependency):
     """Create a new item. Requires authentication."""
     new_item = Item(
         title=item_data.title,
+        brand=item_data.brand,
         description=item_data.description,
         price=item_data.price,
         category=item_data.category,
