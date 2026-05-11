@@ -1,5 +1,21 @@
 enum ItemType { sell, lend }
 
+enum ItemCategory{
+  electronics ,
+  books,
+  sports ,
+  clothing ,
+  tools ,
+  furniture ,
+  kitchen ,
+  other 
+}
+enum ItemBrand{
+  sony,
+  apple,
+  google,
+  microsoft,
+}
 class Item {
   final String id;
   final String title;
@@ -20,7 +36,8 @@ class Item {
     this.imageUrl,
     required this.ownerName,
   });
-
+  
+    
   // Parse a single item from the JSON the API returns
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(

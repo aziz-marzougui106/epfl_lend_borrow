@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import '../../models/item.dart';
-
+import 'filters/price_filter.dart';
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -85,14 +85,19 @@ class _DashboardPageState extends State<DashboardPage> {
               _itemsFuture = ApiService.getItems(); // pull-to-refresh
             });
           },
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            itemCount: items.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 0),
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return _ItemCard(item: item);
-            },
+          child: Column(
+            children: [
+              Row(children: [],),
+              ListView.separated(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                itemCount: items.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 0),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return _ItemCard(item: item);
+                },
+              ),
+            ],
           ),
         );
       },
