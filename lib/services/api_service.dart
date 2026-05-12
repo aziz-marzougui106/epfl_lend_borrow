@@ -6,8 +6,7 @@ import '../models/item.dart';
 class ApiService {
   // Change this to your machine's IP when testing on a physical device.
   // Android emulator: 10.0.2.2 | iOS simulator: 127.0.0.1
-  static const String _baseUrl = 'http://10.0.2.2:8000';
-
+  static const String _baseUrl = '127.0.0.1:8000';
   // ── Private helpers ────────────────────────────────────────────
 
   // Build headers — attaches the JWT token if available
@@ -28,8 +27,8 @@ class ApiService {
   /// Throws an exception with a readable message on failure
   static Future<String> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/auth/login'),
-      headers: await _headers(),
+      Uri.http(_baseUrl, '/auth/login'),
+      headers: await _headers(), // back to JSON headers
       body: jsonEncode({'email': email, 'password': password}),
     );
 
@@ -43,19 +42,55 @@ class ApiService {
     }
   }
 
+  static Future<String> register(String name,String email, String password) async {
+    final response = await http.post(
+      Uri.http(_baseUrl,'/auth/register'),
+      headers: await _headers(),
+      body: jsonEncode({'email': email, 'name':name,'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['access_token'] as String;
+    } else if (response.statusCode == 400) {
+      throw Exception('Email already registered');
+    } else {
+      throw Exception('Login failed. Please try again.');
+    }
+  }
+
   // ── Items ──────────────────────────────────────────────────────
 
   /// GET /filter/ -fetch all items (public, no auth needed) according to a specific filter
   static Future<List<Item>> getItemsAlongFilter(Map<ItemCategory,dynamic> catFilter,Map<ItemType,dynamic> typeFilter,Map<ItemBrand,dynamic> brandFilter,) async{
-    Map<ItemCategory, String> catFilters = {};
-    for(var filter in catFilter.entries){if (filter.value!=null){catFilters.putIfAbsent(filter.key, ()=>filter.value.toString());}}
-    Map<ItemType, String> typeFilters = {};
-    for(var filter in typeFilter.entries){if (filter.value!=null){typeFilters.putIfAbsent(filter.key, ()=>filter.value.toString());}}
-    Map<ItemBrand, String> brandFilters = {};
-    for(var filter in brandFilter.entries){if (filter.value!=null){brandFilters.putIfAbsent(filter.key, ()=>filter.value.toString());}}
+    Map<ItemCategory, bool> catFilters = {};
+    for(var filter in catFilter.entries){if (filter.value!=null){catFilters.putIfAbsent(filter.key, ()=>filter.value);}}
+    Map<ItemType, bool> typeFilters = {};
+    for(var filter in typeFilter.entries){if (filter.value!=null){typeFilters.putIfAbsent(filter.key, ()=>filter.value);}}
+    Map<ItemBrand, bool> brandFilters = {};
+    for(var filter in brandFilter.entries){if (filter.value!=null){brandFilters.putIfAbsent(filter.key, ()=>filter.value);}}
+    Map<String, dynamic>? queryParameters={};
+    final selectedCat = catFilters.entries
+        .where((e) => e.value==true)
+        .firstOrNull;
+    if (selectedCat != null) {
+      queryParameters['category'] = selectedCat.key.name;
+    }    
+    final selectedtype = typeFilters.entries
+        .where((e) => e.value==true)
+        .firstOrNull;
+    if (selectedtype != null) {
+      queryParameters['type'] = selectedtype.key.name;
+    }
+    final selectedbrand = brandFilters.entries
+        .where((e) => e.value==true)
+        .firstOrNull;
+    if (selectedbrand != null) {
+      queryParameters['brand'] = selectedbrand.key.name;
+    }
     final response= await http.get(
-      Uri.http(_baseUrl,'/items/filter',Map<String, dynamic>.from(catFilters)),//TOCHANGE
-      headers: await _headers()
+      Uri.http(_baseUrl,'/items/filter',queryParameters),//TOCHANGE
+      headers: await _headers(),
     );
 
     if (response.statusCode == 200) {
@@ -72,7 +107,7 @@ class ApiService {
   /// GET /items/ — fetch all items (public, no auth needed)
   static Future<List<Item>> getItems() async {
     final response = await http.get(
-      Uri.parse('$_baseUrl/items/'),
+      Uri.http(_baseUrl,'/items/'),
       headers: await _headers(),
     );
 
@@ -93,7 +128,7 @@ class ApiService {
     required String type, // 'sell' or 'lend'
   }) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/items/'),
+      Uri.http(_baseUrl,'/items/'),
       headers: await _headers(requireAuth: true),
       body: jsonEncode({
         'title': title,

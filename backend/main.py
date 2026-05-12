@@ -19,7 +19,7 @@ app.add_middleware(
 
 # Routers
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
-#app.include_router(items.router, prefix="/items", tags=["Items"])
+app.include_router(items.router, prefix="/items", tags=["Items"])
 #app.include_router(agent.router, prefix="/agent", tags=["Agent"]) # later when we introduce the agent
 
 @app.get("/")

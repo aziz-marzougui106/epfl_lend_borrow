@@ -95,16 +95,19 @@ class _DashboardPageState extends State<DashboardPage> {
                 ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,builder: (context) => CategoryPage(chosenCat: _selectedCategories),);if (result != null) {setState(() {_selectedCategories = result;});}},child: Text('category')),
                 ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,builder: (context) => CategoryPage(chosenCat: _selectedBrands),);if (result != null) {setState(() {_selectedBrands = result;});}},child: Text('brand')),
                 ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,builder: (context) => CategoryPage(chosenCat: _selectedTypes),);if (result != null) {setState(() {_selectedTypes = result;});}},child: Text('type')),
-                ElevatedButton(onPressed: ()async{setState((){_itemsFuture = ApiService.getItemsAlongFilter(_selectedCategories,Map<ItemType, dynamic>.from(_selectedTypes),Map<ItemBrand, dynamic>.from(_selectedBrands));});}, child: Text('apply filter(s)')),//needs to be fixed
               ],),
-              ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                itemCount: items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 0),
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  return _ItemCard(item: item);
-                },
+              ElevatedButton(onPressed: ()async{setState((){_itemsFuture = ApiService.getItemsAlongFilter(_selectedCategories,Map<ItemType, dynamic>.from(_selectedTypes),Map<ItemBrand, dynamic>.from(_selectedBrands));});}, child: Text('apply filter(s)')),//needs to be fixed
+
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 0),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return _ItemCard(item: item);
+                  },
+                ),
               ),
             ],
           ),
@@ -129,6 +132,7 @@ class _ItemCard extends StatelessWidget {
       onTap: () {
         // TODO: navigate to item detail
       },
+      behavior: HitTestBehavior.opaque, 
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
@@ -137,6 +141,7 @@ class _ItemCard extends StatelessWidget {
           border: Border.all(color: Colors.grey.withValues(alpha: 0.12)),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Optional image ───────────────────────────

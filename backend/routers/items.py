@@ -2,12 +2,11 @@ from fastapi import APIRouter, HTTPException, status
 from typing import List,Optional
 from uuid import UUID
 
-from database import db_dependency
-from dependencies import user_dependency
+from dependencies import user_dependency,db_dependency
 from models.item import Item
-from backend.schemas.items import ItemCreate, ItemUpdate, ItemResponse,ItemType
+from schemas.items import ItemCreate, ItemUpdate, ItemResponse,ItemType
 
-router = APIRouter(prefix="/items", tags=["items"])
+router = APIRouter()
 
 PRICE_INTERVAL=10
 
@@ -69,8 +68,6 @@ def get_item(item_id: UUID, db: db_dependency):
     if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
     return _to_response(item)
-
-
 
 
 @router.post("/", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)

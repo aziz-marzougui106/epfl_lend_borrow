@@ -47,6 +47,7 @@ items = [
     Item(
         title='MacBook Pro 16"',
         description="Barely used MacBook Pro 16-inch. M1 Max, 32GB RAM, 1TB SSD. Perfect for coding and design projects. Comes with original charger and box.",
+        brand='apple',
         price=1899.00,
         category="Electronics",
         type=ItemType.sell,
@@ -56,6 +57,7 @@ items = [
     Item(
         title="Calculus Early Transcendentals",
         description="Textbook for MATH-101. Some highlighting in chapters 3-5 but overall great condition. Edition 8.",
+        brand='apple',
         price=45.00,
         category="Books",
         type=ItemType.sell,
@@ -64,6 +66,7 @@ items = [
     Item(
         title="Ergonomic Desk Chair",
         description="Herman Miller Aeron chair, size B. Excellent for long study sessions. Available for lending by the semester.",
+        brand='apple',
         price=30.00,
         category="Furniture",
         type=ItemType.lend,
@@ -73,6 +76,7 @@ items = [
     Item(
         title="Sony WH-1000XM4",
         description="Noise cancelling headphones in perfect condition. Great for studying in the library. Box and all accessories included.",
+        brand='apple',
         price=15.00,
         category="Electronics",
         type=ItemType.lend,
@@ -82,6 +86,7 @@ items = [
     Item(
         title="EPFL Hoodie",
         description="Size M. Official EPFL merchandise. Very warm and comfortable. Worn only a few times.",
+        brand='apple',
         price=30.00,
         category="Clothing",
         type=ItemType.sell,
@@ -91,6 +96,7 @@ items = [
     Item(
         title="Scientific Calculator TI-84",
         description="Texas Instruments TI-84 Plus. Required for several EPFL courses. Works perfectly, battery recently replaced.",
+        brand='apple',
         price=5.00,
         category="Electronics",
         type=ItemType.lend,

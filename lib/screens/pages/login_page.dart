@@ -1,3 +1,4 @@
+import 'package:epfl_lend_borrow/screens/pages/login/create_user.dart';
 import 'package:epfl_lend_borrow/screens/pages/main_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'main_page.dart';
@@ -289,6 +290,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: OutlinedButton(
                   onPressed: () {
                     // TODO: navigate to register page
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> CreateAccountPage()));
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFFE2001A),
