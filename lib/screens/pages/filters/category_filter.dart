@@ -13,20 +13,26 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListView.builder(
-          itemCount: ItemCategory.values.length,
-          itemBuilder: (context, index) => CheckboxListTile.adaptive(value:false, title:Text(ItemCategory.values.elementAt(index).toString()), onChanged: (value)=> setState(() {widget.chosenCat[ItemCategory.values.elementAt(index)]=value!;}))
-        ),
-        ElevatedButton(
-          onPressed: (){
-            Navigator.pop(context,widget.chosenCat);
-          }, 
-          child: Text('done')
-        ),
-        
-      ],
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: ItemCategory.values.length,
+              itemBuilder: (context, index) {final category = ItemCategory.values.elementAt(index);final isChecked = widget.chosenCat[category] ?? false;  return CheckboxListTile.adaptive(value:isChecked, title:Text(ItemCategory.values.elementAt(index).name), onChanged: (value)=> setState(() {widget.chosenCat[ItemCategory.values.elementAt(index)]=value!;}));}
+            ),
+          ),
+          ElevatedButton(
+            onPressed: (){
+              Navigator.pop(context,widget.chosenCat);
+            }, 
+            child: Text('done')
+          ),
+          
+        ],
+      ),
     );
   }
 }

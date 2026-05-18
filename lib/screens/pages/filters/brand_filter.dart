@@ -14,10 +14,14 @@ class _BrandPageState extends State<BrandPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        ListView.builder(
-          itemCount: ItemBrand.values.length,
-          itemBuilder: (context, index) => CheckboxListTile.adaptive(value:false, title:Text(ItemBrand.values.elementAt(index).toString()), onChanged: (value)=> setState(() {widget.chosenBrand[ItemBrand.values.elementAt(index)]=value!;}))
+        Flexible(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: ItemBrand.values.length,
+            itemBuilder: (context, index) {final brand = ItemBrand.values.elementAt(index);final isChecked = widget.chosenBrand[brand] ?? false;  return CheckboxListTile.adaptive(value:isChecked, title:Text(ItemBrand.values.elementAt(index).name), onChanged: (value)=> setState(() {widget.chosenBrand[ItemBrand.values.elementAt(index)]=value!;}));}
+          ),
         ),
         ElevatedButton(
           onPressed: (){
