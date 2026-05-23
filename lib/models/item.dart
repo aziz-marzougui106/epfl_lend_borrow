@@ -16,6 +16,14 @@ enum ItemBrand{
   google,
   microsoft,
 }
+enum ItemCondition{
+  brandnew,
+  likenew,
+  good,
+  fair,
+  poor
+
+}
 class Item {
   final String id;
   final String title;

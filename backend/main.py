@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-from routers import auth, items
+from routers import auth, items,chat
 
 # Create all tables automatically
 Base.metadata.create_all(bind=engine)
@@ -20,6 +20,7 @@ app.add_middleware(
 # Routers
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(items.router, prefix="/items", tags=["Items"])
+app.include_router(chat.router, prefix="/chat",tags= ["Chat"])
 #app.include_router(agent.router, prefix="/agent", tags=["Agent"]) # later when we introduce the agent
 
 @app.get("/")

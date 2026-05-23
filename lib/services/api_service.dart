@@ -149,4 +149,38 @@ class ApiService {
       throw Exception('Failed to create item');
     }
   }
+
+  /// POST /chat/post — send a message to the posting agent
+/// Returns a map with 'reply' (String) and 'done' (bool)
+static Future<Map<String, dynamic>> postMessage({
+  required String message,
+  required bool isFirstMessage,
+  required String category,
+  required String brand,
+  required String condition,
+  required String type,
+  required double price,
+}) async {
+  final response = await http.post(
+    Uri.http(_baseUrl, '/chat/post'),
+    headers: await _headers(requireAuth: true),
+    body: jsonEncode({
+      'message': message,
+      'is_first_message': isFirstMessage,
+      'category': category,
+      'brand': brand,
+      'condition': condition,
+      'type': type,
+      'price': price,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  } else if (response.statusCode == 401) {
+    throw Exception('You must be logged in to post an item');
+  } else {
+    throw Exception('Failed to reach the AI assistant');
+  }
+  }
 }
