@@ -123,6 +123,7 @@ class ApiService {
   static Future<Item> createItem({
     required String title,
     required String description,
+    required String brand,
     required double price,
     required String category,
     required String type, // 'sell' or 'lend'
@@ -133,6 +134,7 @@ class ApiService {
       body: jsonEncode({
         'title': title,
         'description': description,
+        'brand':brand,
         'price': price,
         'category': category,
         'type': type,

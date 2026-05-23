@@ -96,8 +96,8 @@ class _DashboardPageState extends State<DashboardPage> {
             children: [
               Row(children: [
                 ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,isScrollControlled: true,builder: (context) => CategoryPage(chosenCat: Map.from(_selectedCategories)),);if(result!=null){setState((){_selectedCategories=Map.from(result);});}},child: Text('category')),
-                ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,builder: (context) => BrandPage(chosenBrand: _selectedBrands),);if (result != null) {setState(() {_selectedBrands = result;});}},child: Text('brand')),
-                ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,builder: (context) => TypePage(chosenType: _selectedTypes),);if (result != null) {setState(() {_selectedTypes = result;});}},child: Text('type')),
+                ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,isScrollControlled: true,builder: (context) => BrandPage(chosenBrand: _selectedBrands),);if (result != null) {setState(() {_selectedBrands = result;});}},child: Text('brand')),
+                ElevatedButton(onPressed: ()async{final result = await showModalBottomSheet(context: context,isScrollControlled: true,builder: (context) => TypePage(chosenType: _selectedTypes),);if (result != null) {setState(() {_selectedTypes = result;});}},child: Text('type')),
               ],),
               ElevatedButton(onPressed: ()async{setState((){_itemsFuture = ApiService.getItemsAlongFilter(_selectedCategories,Map<ItemType, dynamic>.from(_selectedTypes),Map<ItemBrand, dynamic>.from(_selectedBrands));});}, child: Text('apply filter(s)')),//needs to be fixed
 

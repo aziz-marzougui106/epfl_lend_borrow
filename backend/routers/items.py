@@ -4,7 +4,7 @@ from uuid import UUID
 
 from dependencies import user_dependency,db_dependency
 from models.item import Item
-from schemas.items import ItemCreate, ItemUpdate, ItemResponse,ItemType
+from schemas.items import ItemCreate, ItemUpdate, ItemResponse,ItemType,ItemBrand,ItemCategory
 
 router = APIRouter()
 
@@ -42,9 +42,9 @@ def get_my_items(db: db_dependency, current_user: user_dependency):
 
 @router.get("/filter",response_model=List[ItemResponse])
 def filter(db:db_dependency,
-           category:Optional[str]=None,
+           category:Optional[ItemCategory]=None,
            title:Optional[str]=None,
-           brand:Optional[str]=None,
+           brand:Optional[ItemBrand]=None,
            price:Optional[float]=None,
            type:Optional[ItemType]=None
 ):

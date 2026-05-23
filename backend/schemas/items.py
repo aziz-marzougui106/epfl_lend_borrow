@@ -10,6 +10,8 @@ class ItemType(str, Enum):
 class ItemBrand(str,Enum):#Spot on. If you omit the str inheritance, Python treats the enum members as objects, not strings.
     sony="sony"
     apple="apple"
+    microsoft="microsoft"
+    google="google"
 class ItemCategory(str, Enum):
     electronics = "electronics"
     books = "books"
@@ -20,11 +22,18 @@ class ItemCategory(str, Enum):
     kitchen = "kitchen"
     other = "other"
 
+class ItemCondition(str,Enum):
+    new="new"
+    like_new="like_new"
+    good="good"
+    fair="fair"
+    poor="poor"
 
 class ItemCreate(BaseModel):
     title: str
     brand: str
     description: str
+    condition:ItemCondition
     price: float
     category: ItemCategory
     type: ItemType
@@ -44,10 +53,11 @@ class ItemUpdate(BaseModel):
 class ItemResponse(BaseModel):
     id: UUID4
     title: str
-    brand: str
+    brand: ItemBrand
     description: str
+    condition: ItemCondition
     price: float
-    category: str        # String in the model, not an Enum column
+    category: ItemCategory        # String in the model, not an Enum column
     type: ItemType
     image_url: Optional[str]
     owner_id: UUID4
